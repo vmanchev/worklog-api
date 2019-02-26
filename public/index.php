@@ -1,0 +1,64 @@
+<?php
+
+use Phalcon\Http\Response;
+use Phalcon\Mvc\Micro;
+use Phalcon\Di\FactoryDefault;
+use Phalcon\Mvc\Model\Message as ModelMessage;
+use Worklog\Models\User as UserModel;
+use Worklog\Controllers\UserController;
+use Dmkit\Phalcon\Auth\Middleware\Micro as AuthMicro;
+use Phalcon\Mvc\Micro\Collection as MicroCollection;
+
+error_reporting(E_ALL);
+
+define('BASE_PATH', dirname(__DIR__));
+define('APP_PATH', BASE_PATH . '/app');
+
+try {
+
+  $di = new FactoryDefault();
+  $app = new Micro($di);
+
+  include '../vendor/autoload.php';
+  include APP_PATH . '/config/loader.php';
+  include APP_PATH . '/config/services.php';
+
+  $userCollection = new MicroCollection();
+  $userCollection->setHandler(new UserController());
+  $userCollection->setPrefix('/user');
+  $userCollection->post('/', 'create');
+  $userCollection->post('/login', 'login');
+  $app->mount($userCollection);
+
+  $app->get(
+      '/',
+      function () {
+          $response = new Response();
+          $response->setJsonContent([
+              'message' => 'hello world',
+          ]);
+          return $response;
+      }
+  );
+  $auth = new AuthMicro($app, [
+      'secretKey' => '43463960c6d7cd6ec8dd974800c36b64a5b54b9f',
+      'payload' => [
+          'exp' => 1440,
+          'iss' => 'phalcon-jwt-auth',
+      ],
+      'ignoreUri' => [
+          '/',
+          '/user',
+          '/user/login'
+      ],
+  ]);
+  $app->notFound(function () use ($app) {
+      $app->response->setStatusCode(404, "Not Found")->sendHeaders();
+  });
+  $app->handle();
+
+
+} catch (\Exception $e) {
+      echo $e->getMessage() . '<br>';
+      echo '<pre>' . $e->getTraceAsString() . '</pre>';
+}

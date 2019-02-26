@@ -1,0 +1,5 @@
+{
+  "require": {
+      "dmkit/phalcon-jwt-auth": "^1.0"
+  }
+}
