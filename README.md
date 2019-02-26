@@ -5,15 +5,17 @@ RESTful API for tracking work and time
 Setup the following Apache/Nginx environment variables:
 
 ```
--------------------------------
-| Name    | Description       |
--------------------------------
-| DB_NAME | Database name     |
--------------------------------
-| DB_USER | Database username |
--------------------------------
-| DB_PASS | Database password |
--------------------------------
+-----------------------------------
+| Name    | Description           |
+-----------------------------------
+| DB_NAME | Database name         |
+-----------------------------------
+| DB_USER | Database username     |
+-----------------------------------
+| DB_PASS | Database password     |
+-----------------------------------
+| JWT_SECRET | JWT authentication |
+-----------------------------------
 ```
 
 ## Installation

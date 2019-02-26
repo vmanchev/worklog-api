@@ -11,7 +11,7 @@ return new \Phalcon\Config([
     ],
 
     'jwtAuth' => [
-      'secretKey' => '43463960c6d7cd6ec8dd974800c36b64a5b54b9f',
+      'secretKey' => getenv('JWT_SECRET'),
       'payload' => [
           'exp' => 1440,
           'iss' => 'phalcon-jwt-auth',
