@@ -2,20 +2,18 @@
 RESTful API for tracking work and time
 
 ## Configuration
-Setup the following Apache/Nginx environment variables:
+
+Use the `/app/config/config.sample.php` file to create a configuration file for each 
+environment. Replace `sample` with the desired environment name. The following file 
+names are just an example of what is expected and are included in the .gitignore file. 
+The environment name must be defined as Apache/Nginx `APPLICATION_ENV` variable. If 
+different environment names are used, don't forget to update your .gitignore file in 
+order to avoid commiting sensitive information in the repository.
 
 ```
---------------------------------------
-| Name       | Description           |
---------------------------------------
-| DB_NAME    | Database name         |
---------------------------------------
-| DB_USER    | Database username     |
---------------------------------------
-| DB_PASS    | Database password     |
---------------------------------------
-| JWT_SECRET | JWT authentication    |
---------------------------------------
+config.development.php
+config.staging.php
+config.production.php
 ```
 
 ## Installation
@@ -28,6 +26,16 @@ composer install
 
 2. Run migrations 
 
+To create a new migration, use:
+
 ```
-ToDo
+phalcon migration generate --config=app/config/config.ENV.php
 ```
+
+To run the migrations, use similar command:
+
+```
+phalcon migration run --config=app/config/config.ENV.php
+```
+
+where `ENV` is the environment name, e.g. development, staging, production.

@@ -4,7 +4,7 @@ use Phalcon\Db\Adapter\Pdo\Mysql as PdoMysql;
 use Phalcon\Security;
 
 $di->setShared('config', function () {
-    return include APP_PATH . "/config/config.php";
+    return include constant('APP_PATH') . "/config/config." . getenv('APPLICATION_ENV') . ".php";
 });
 
 $di->setShared('db', function () use ($app) {

@@ -3,15 +3,15 @@
 return new \Phalcon\Config([
     'database' => [
         'adapter'    => 'Mysql',
-        'host'       => 'localhost',
-        'username'   => getenv('DB_USER'),
-        'password'   => getenv('DB_PASS'),
-        'dbname'     => getenv('DB_NAME'),
+        'host'       => '',
+        'username'   => '',
+        'password'   => '',
+        'dbname'     => '',
         'charset'    => 'utf8',
     ],
 
     'jwtAuth' => [
-      'secretKey' => getenv('JWT_SECRET'),
+      'secretKey' => '',
       'payload' => [
           'exp' => 1440,
           'iss' => 'phalcon-jwt-auth',
@@ -24,7 +24,7 @@ return new \Phalcon\Config([
     ],
 
     'application' => [
-        'modelsDir'      => APP_PATH . '/models/',
-        'migrationsDir'  => APP_PATH . '/migrations/'
+        'modelsDir'      => constant('APP_PATH') . '/models/',
+        'migrationsDir'  => constant('APP_PATH') . '/migrations/'
     ]
 ]);
