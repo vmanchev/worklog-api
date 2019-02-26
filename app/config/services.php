@@ -8,7 +8,7 @@ $di->setShared('config', function () {
 });
 
 $di->setShared('db', function () use ($app) {
-    return new PdoMysql($app->config->database);
+    return new PdoMysql($app->config->database->toArray());
 });
 
 $di->setShared('security', function () {

@@ -2,13 +2,15 @@
 
 namespace Worklog\Controllers;
 
+use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
 use Worklog\Models\User as UserModel;
-use Phalcon\Mvc\Model\Message as ModelMessage;
 
-class UserController extends BaseController {
+class UserController extends BaseController
+{
 
-    public function create() {
+    public function create()
+    {
 
         $userData = $this->request->getJsonRawBody();
 
@@ -19,12 +21,13 @@ class UserController extends BaseController {
 
         if ($status === true) {
             $userModel->password = null;
-            return $this->successResponse($userModel);
+            return $this->successResponse($userModel, 201);
         }
         return $this->errorResponse($userModel);
     }
 
-    public function login() {
+    public function login()
+    {
 
         $userData = $this->request->getJsonRawBody();
 
@@ -32,13 +35,25 @@ class UserController extends BaseController {
 
         if ($userModel && $this->security->checkHash($userData->password, $userModel->password)) {
             return $this->successResponse([
-                'accessToken' => $this->auth->make($userModel->toArray(
-                    ['id', 'email', 'firstName', 'lastName']
-                ))
+                'accessToken' => $this->auth->make(['user' => ['id' => $userModel->id]]),
             ]);
         }
 
         $userModel->appendMessage(new ModelMessage('login.invalid'));
+        return $this->errorResponse($userModel);
+    }
+
+    public function getUserByAuthToken()
+    {
+        $userModel = UserModel::findFirst($this->auth->data('user')->id);
+
+        if ($userModel) {
+            $userData = $userModel->toArray();
+            $userData['password'] = null;
+            return $this->successResponse($userData);
+        }
+
+        $userModel->appendMessage(new ModelMessage('user.notFound'));
         return $this->errorResponse($userModel);
     }
 }
