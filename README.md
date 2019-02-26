@@ -26,6 +26,16 @@ composer install
 
 2. Run migrations 
 
+To create a new migration, use:
+
 ```
-ToDo
+phalcon migration generate --config=app/config/config.ENV.php
 ```
+
+To run the migrations, use similar command:
+
+```
+phalcon migration run --config=app/config/config.ENV.php
+```
+
+where `ENV` is the environment name, e.g. development, staging, production.
