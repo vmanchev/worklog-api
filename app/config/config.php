@@ -4,10 +4,23 @@ return new \Phalcon\Config([
     'database' => [
         'adapter'    => 'Mysql',
         'host'       => 'localhost',
-        'username'   => 'root',
-        'password'   => 'root',
-        'dbname'     => 'worklog_dev',
+        'username'   => getenv('DB_USER'),
+        'password'   => getenv('DB_PASS'),
+        'dbname'     => getenv('DB_NAME'),
         'charset'    => 'utf8',
+    ],
+
+    'jwtAuth' => [
+      'secretKey' => '43463960c6d7cd6ec8dd974800c36b64a5b54b9f',
+      'payload' => [
+          'exp' => 1440,
+          'iss' => 'phalcon-jwt-auth',
+      ],
+      'ignoreUri' => [
+          '/',
+          '/user:POST',
+          '/user/login'
+      ],
     ],
 
     'application' => [
