@@ -26,8 +26,11 @@ try {
   $userCollection = new MicroCollection();
   $userCollection->setHandler(new UserController());
   $userCollection->setPrefix('/user');
+
   $userCollection->post('/', 'create');
   $userCollection->post('/login', 'login');
+  $userCollection->get('/me', 'getUserByAuthToken');
+
   $app->mount($userCollection);
 
   $app->get(
@@ -48,7 +51,7 @@ try {
       ],
       'ignoreUri' => [
           '/',
-          '/user',
+          '/user:POST',
           '/user/login'
       ],
   ]);

@@ -3,22 +3,27 @@
 namespace Worklog\Models;
 
 use Phalcon\Mvc\Model;
-use Phalcon\Mvc\Model\Message;
 use Phalcon\Validation;
+use Phalcon\Validation\Validator\Email;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Uniqueness;
-use Phalcon\Validation\Validator\Email;
 
 class User extends Model
 {
+    public function initialize()
+    {
+        $this->setup(
+            array('notNullValidations' => false) //switch off
+        );
+    }
+
     public function validation()
     {
         $validator = new Validation();
-    
+
         $validator->add(
             'email',
             new PresenceOf([
-                'field'   => 'email',
                 'message' => 'email.required',
             ])
         );
@@ -26,7 +31,6 @@ class User extends Model
         $validator->add(
             'email',
             new Email([
-                'field'   => 'email',
                 'message' => 'email.invalid',
             ])
         );
@@ -34,7 +38,6 @@ class User extends Model
         $validator->add(
             'email',
             new Uniqueness([
-                'field'   => 'email',
                 'message' => 'email.duplicate',
             ])
         );
@@ -42,7 +45,7 @@ class User extends Model
         $validator->add(
             'firstName',
             new PresenceOf([
-                'field'   => 'firstName',
+                'field' => 'firstName',
                 'message' => 'firstName.required',
             ])
         );
@@ -50,11 +53,11 @@ class User extends Model
         $validator->add(
             'lastName',
             new PresenceOf([
-                'field'   => 'lastName',
+                'field' => 'lastName',
                 'message' => 'lastName.required',
             ])
         );
-    
+
         return $this->validate($validator);
     }
 }

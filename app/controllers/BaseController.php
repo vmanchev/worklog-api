@@ -6,8 +6,9 @@ use Phalcon\Mvc\Controller;
 
 class BaseController extends Controller {
 
-    function successResponse($model): \Phalcon\Http\Response
+    function successResponse($model, int $httpCode = 200): \Phalcon\Http\Response
     {    
+        $this->response->setStatusCode($httpCode);
         $this->response->setJsonContent(
             [
                 'status' => 'OK',
@@ -20,10 +21,10 @@ class BaseController extends Controller {
         return $this->response;
     }
     
-    function errorResponse(\Phalcon\Mvc\Model $model): \Phalcon\Http\Response
+    function errorResponse(\Phalcon\Mvc\Model $model, int $httpCode = 409): \Phalcon\Http\Response
     {
         // Change the HTTP status
-        $this->response->setStatusCode(409, 'Conflict');
+        $this->response->setStatusCode(409);
     
         // Send errors to the client
         $errors = [];
