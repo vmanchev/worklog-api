@@ -1,2 +1,5 @@
 vendor/
 composer.lock
+app/config/config.development.php
+app/config/config.staging.php
+app/config/config.production.php
