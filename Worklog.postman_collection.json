@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"firstName\": \"John\",\n\t\"lastName\": \"Lennon\"\n}"
+							"raw": "{\n\t\"email\": \"manchev@prodio.bg\",\n\t\"firstName\": \"Ringo\",\n\t\"lastName\": \"Starr\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user",
@@ -38,6 +38,19 @@
 				},
 				{
 					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7dece744-d9af-4a10-94d7-055574db52f7",
+								"exec": [
+									"var response = pm.response.json();",
+									"pm.environment.set(\"accessToken\", response.data.accessToken);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
 					"request": {
 						"method": "POST",
 						"header": [
@@ -50,7 +63,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"password\": \"WvE7xVviHXPCFB3y\"\n}"
+							"raw": "{\n\t\"email\": \"manchev@prodio.bg\",\n\t\"password\": \"TBe5GW4r9u2AZp1D\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user/login",
@@ -88,6 +101,39 @@
 							"path": [
 								"user",
 								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"id\": \"2\",\n        \"email\": \"manchev@prodio.bg\",\n        \"firstName\": \"Ringo\",\n        \"lastName\": \"Starr\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user"
 							]
 						}
 					},

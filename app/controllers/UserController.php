@@ -48,34 +48,34 @@ class UserController extends BaseController
         return $this->errorResponse($userModel);
     }
 
-    public function forgotPassword() {
+    public function forgotPassword()
+    {
 
-      $email = $this->request->getJsonRawBody()->email;
+        $email = $this->request->getJsonRawBody()->email;
 
+        $userModel = UserModel::findFirstByEmail($email);
 
-      $userModel = UserModel::findFirstByEmail($email);
+        if ($userModel) {
 
-      if ($userModel) {
+            $userData = $userModel->toArray();
+            $userData['plainTextPassword'] = $this->generatePassword();
 
-          $userData = $userModel->toArray();
-          $userData['plainTextPassword'] = $this->generatePassword();
+            $userModel->password = $this->security->hash($userData['plainTextPassword']);
 
-          $userModel->password = $this->security->hash($userData['plainTextPassword']);
+            $userModel->save();
 
-          $userModel->save();
+            $this->sendEmail('forgot', 'Your new password', $userData);
 
-          $this->sendEmail('forgot', 'Your new password', $userData);
-
-          return $this->successResponse(['email' => $email], 200);
-      }
-      return $this->errorResponse($userModel, 404);
+            return $this->successResponse(['email' => $email], 200);
+        }
+        return $this->errorResponse($userModel, 404);
 
     }
 
     /**
      * Lookup user by id, using the accessToken data
      */
-    public function getUserByAuthToken() : UserModel
+    public function getUserByAuthToken()
     {
         $userModel = UserModel::findFirst($this->auth->data('user')->id);
 
@@ -89,35 +89,72 @@ class UserController extends BaseController
         return $this->errorResponse($userModel);
     }
 
+    public function update()
+    {
+        $userModel = UserModel::findFirst($this->auth->data('user')->id);
+
+        if (!$userModel) {
+            $userModel->appendMessage(new ModelMessage('user.notFound'));
+            return $this->errorResponse($userModel);
+        }
+
+        // get the submitted data
+        $userRequest = (array) $this->request->getJsonRawBody();
+
+        // edit own profile
+        if ($userRequest['id'] !== $userModel->id) {
+            $userModel->appendMessage(new ModelMessage('user.accessDenied'));
+            return $this->errorResponse($userModel);
+        }
+
+        // if password is submitted, we need to encode it
+        if (isset($userRequest['password'])) {
+            $userRequest['password'] = $this->security->hash($userRequest['password']);
+        }
+
+        $userData = array_merge($userModel->toArray(), $userRequest);
+
+        $result = $userModel->save($userData);
+
+        if ($result) {
+          $userData['password'] = null;
+          return $this->successResponse($userData);
+        }
+
+        return $this->errorResponse($userModel);
+    }
+
     /**
      * Password generator
      *
      * @return string
      * @see https://docs.phalconphp.com/3.4/en/api/Phalcon_Security_Random
      */
-    private function generatePassword(): string {
-      return (new \Phalcon\Security\Random())->base58();
+    private function generatePassword(): string
+    {
+        return (new \Phalcon\Security\Random())->base58();
     }
 
     /**
      * Send email message
-     * 
+     *
      * @param string $templateName Must match a folter name from 'emails'
      * @param string $subject Subject line for this message
-     * @param array $params Template and user data to be used for this message 
+     * @param array $params Template and user data to be used for this message
      */
-    private function sendEmail(string $templateName, string $subject, array $params) {
-      
-      $contentHtml = Template::renderHtml($this->view, $templateName, $params);
-      $contentTxt = Template::renderTxt($this->view, $templateName, $params);
+    private function sendEmail(string $templateName, string $subject, array $params)
+    {
 
-      $this->mail->messages()->send($this->config->mailGun->domain, [
-          'from' => $this->config->mailGun->defaultSender->name . '<' . $this->config->mailGun->defaultSender->email . '>',
-          'to' => $params['firstName'] . ' ' . $params['lastName'] . ' <' . $params['email'] . '>',
-          'subject' => $subject,
-          'text' => $contentTxt,
-          'html' => $contentHtml,
-      ]);
+        $contentHtml = Template::renderHtml($this->view, $templateName, $params);
+        $contentTxt = Template::renderTxt($this->view, $templateName, $params);
+
+        $this->mail->messages()->send($this->config->mailGun->domain, [
+            'from' => $this->config->mailGun->defaultSender->name . '<' . $this->config->mailGun->defaultSender->email . '>',
+            'to' => $params['firstName'] . ' ' . $params['lastName'] . ' <' . $params['email'] . '>',
+            'subject' => $subject,
+            'text' => $contentTxt,
+            'html' => $contentHtml,
+        ]);
 
     }
 }

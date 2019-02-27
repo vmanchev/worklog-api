@@ -28,6 +28,7 @@ try {
   $userCollection->setPrefix('/user');
 
   $userCollection->post('/', 'create');
+  $userCollection->put('/', 'update');
   $userCollection->post('/login', 'login');
   $userCollection->get('/me', 'getUserByAuthToken');
   $userCollection->post('/forgot', 'forgotPassword');
