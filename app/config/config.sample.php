@@ -23,8 +23,18 @@ return new \Phalcon\Config([
       ],
     ],
 
+    'mailGun' => [
+      'domain' => '',
+      'apiKey' => '',
+      'defaultSender' => [
+          'name' => '',
+          'email' => ''
+      ]
+    ],
+    
     'application' => [
         'modelsDir'      => constant('APP_PATH') . '/models/',
-        'migrationsDir'  => constant('APP_PATH') . '/migrations/'
+        'migrationsDir'  => constant('APP_PATH') . '/migrations/',
+        'templatesDir' => constant('APP_PATH') . '/emails/'
     ]
 ]);

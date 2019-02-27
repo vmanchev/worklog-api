@@ -5,6 +5,7 @@ namespace Worklog\Controllers;
 use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
 use Worklog\Models\User as UserModel;
+use Worklog\Utils\Template;
 
 class UserController extends BaseController
 {
@@ -12,14 +13,19 @@ class UserController extends BaseController
     public function create()
     {
 
-        $userData = $this->request->getJsonRawBody();
+        $userData = (array) $this->request->getJsonRawBody();
 
-        $userData->password = $this->security->hash($userData->password);
+        $userData['plainTextPassword'] = $this->generatePassword();
+
+        $userData['password'] = $this->security->hash($userData['plainTextPassword']);
 
         $userModel = new UserModel();
-        $status = $userModel->save((array) $userData);
+        $status = $userModel->save($userData);
 
         if ($status === true) {
+
+            $this->sendEmail('register', 'Your password', $userData);
+
             $userModel->password = null;
             return $this->successResponse($userModel, 201);
         }
@@ -55,5 +61,24 @@ class UserController extends BaseController
 
         $userModel->appendMessage(new ModelMessage('user.notFound'));
         return $this->errorResponse($userModel);
+    }
+
+    private function generatePassword(): string {
+      return (new \Phalcon\Security\Random())->base58();
+    }
+
+    private function sendEmail(string $templateName, string $subject, array $userData) {
+      
+      $contentHtml = Template::renderHtml($this->view, 'register', $userData);
+      $contentTxt = Template::renderTxt($this->view, 'register', $userData);
+
+      $this->mail->messages()->send($this->config->mailGun->domain, [
+          'from' => $this->config->mailGun->defaultSender->name . '<' . $this->config->mailGun->defaultSender->email . '>',
+          'to' => $userData['firstName'] . ' ' . $userData['lastName'] . ' <' . $userData['email'] . '>',
+          'subject' => $subject,
+          'text' => $contentTxt,
+          'html' => $contentHtml,
+      ]);
+
     }
 }
