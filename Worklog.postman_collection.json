@@ -209,6 +209,44 @@
 			]
 		},
 		{
+			"name": "Log",
+			"item": [
+				{
+					"name": "Log time",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"name\": \"Test project 333\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/log",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"log"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Home",
 			"request": {
 				"method": "GET",
