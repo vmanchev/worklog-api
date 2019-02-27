@@ -30,6 +30,7 @@ try {
   $userCollection->post('/', 'create');
   $userCollection->post('/login', 'login');
   $userCollection->get('/me', 'getUserByAuthToken');
+  $userCollection->post('/forgot', 'forgotPassword');
 
   $app->mount($userCollection);
 

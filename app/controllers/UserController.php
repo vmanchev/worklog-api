@@ -12,7 +12,6 @@ class UserController extends BaseController
 
     public function create()
     {
-
         $userData = (array) $this->request->getJsonRawBody();
 
         $userData['plainTextPassword'] = $this->generatePassword();
@@ -49,7 +48,34 @@ class UserController extends BaseController
         return $this->errorResponse($userModel);
     }
 
-    public function getUserByAuthToken()
+    public function forgotPassword() {
+
+      $email = $this->request->getJsonRawBody()->email;
+
+
+      $userModel = UserModel::findFirstByEmail($email);
+
+      if ($userModel) {
+
+          $userData = $userModel->toArray();
+          $userData['plainTextPassword'] = $this->generatePassword();
+
+          $userModel->password = $this->security->hash($userData['plainTextPassword']);
+
+          $userModel->save();
+
+          $this->sendEmail('forgot', 'Your new password', $userData);
+
+          return $this->successResponse(['email' => $email], 200);
+      }
+      return $this->errorResponse($userModel, 404);
+
+    }
+
+    /**
+     * Lookup user by id, using the accessToken data
+     */
+    public function getUserByAuthToken() : UserModel
     {
         $userModel = UserModel::findFirst($this->auth->data('user')->id);
 
@@ -63,18 +89,31 @@ class UserController extends BaseController
         return $this->errorResponse($userModel);
     }
 
+    /**
+     * Password generator
+     *
+     * @return string
+     * @see https://docs.phalconphp.com/3.4/en/api/Phalcon_Security_Random
+     */
     private function generatePassword(): string {
       return (new \Phalcon\Security\Random())->base58();
     }
 
-    private function sendEmail(string $templateName, string $subject, array $userData) {
+    /**
+     * Send email message
+     * 
+     * @param string $templateName Must match a folter name from 'emails'
+     * @param string $subject Subject line for this message
+     * @param array $params Template and user data to be used for this message 
+     */
+    private function sendEmail(string $templateName, string $subject, array $params) {
       
-      $contentHtml = Template::renderHtml($this->view, 'register', $userData);
-      $contentTxt = Template::renderTxt($this->view, 'register', $userData);
+      $contentHtml = Template::renderHtml($this->view, $templateName, $params);
+      $contentTxt = Template::renderTxt($this->view, $templateName, $params);
 
       $this->mail->messages()->send($this->config->mailGun->domain, [
           'from' => $this->config->mailGun->defaultSender->name . '<' . $this->config->mailGun->defaultSender->email . '>',
-          'to' => $userData['firstName'] . ' ' . $userData['lastName'] . ' <' . $userData['email'] . '>',
+          'to' => $params['firstName'] . ' ' . $params['lastName'] . ' <' . $params['email'] . '>',
           'subject' => $subject,
           'text' => $contentTxt,
           'html' => $contentHtml,

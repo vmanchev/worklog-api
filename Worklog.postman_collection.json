@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"test@example.org\",\n\t\"password\": \"qwerty\",\n\t\"firstName\": \"John\",\n\t\"lastName\": \"Doe\"\n}"
+							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"firstName\": \"John\",\n\t\"lastName\": \"Lennon\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user",
@@ -50,7 +50,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"test@example.org\",\n\t\"password\": \"qwerty\"\n}"
+							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"password\": \"WvE7xVviHXPCFB3y\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user/login",
@@ -88,6 +88,35 @@
 							"path": [
 								"user",
 								"me"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Forgotten password",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/user/forgot",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"user",
+								"forgot"
 							]
 						}
 					},
