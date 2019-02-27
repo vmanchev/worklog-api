@@ -5,6 +5,7 @@ use Phalcon\Mvc\Micro;
 use Phalcon\Di\FactoryDefault;
 use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Models\User as UserModel;
+use Worklog\Controllers\ProjectController;
 use Worklog\Controllers\UserController;
 use Dmkit\Phalcon\Auth\Middleware\Micro as AuthMicro;
 use Phalcon\Mvc\Micro\Collection as MicroCollection;
@@ -34,6 +35,14 @@ try {
   $userCollection->post('/forgot', 'forgotPassword');
 
   $app->mount($userCollection);
+
+  $projectCollection = new MicroCollection();
+  $projectCollection->setHandler(new ProjectController());
+  $projectCollection->setPrefix('/project');
+
+  $projectCollection->post('/', 'create');
+  
+  $app->mount($projectCollection);  
 
   $app->get(
       '/',

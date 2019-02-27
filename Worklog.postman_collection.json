@@ -79,7 +79,7 @@
 					"response": []
 				},
 				{
-					"name": "Current user",
+					"name": "Get current user",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -107,7 +107,7 @@
 					"response": []
 				},
 				{
-					"name": "Update",
+					"name": "Update user",
 					"request": {
 						"method": "PUT",
 						"header": [
@@ -163,6 +163,44 @@
 							"path": [
 								"user",
 								"forgot"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Project",
+			"item": [
+				{
+					"name": "Create new project",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"name\": \"Test project 333\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/project",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"project"
 							]
 						}
 					},

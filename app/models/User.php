@@ -12,6 +12,8 @@ class User extends Model
 {
     public function initialize()
     {
+      $this->hasMany('id', '\Worklog\Models\Project', 'user_id', ['alias' => 'Projects']);
+
         $this->setup(
             array('notNullValidations' => false) //switch off
         );
