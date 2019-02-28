@@ -44,6 +44,8 @@ class Project extends Model
             ],
         ]);
 
+        $this->hasMany('id', '\Worklog\Models\Log', 'project_id', ['alias' => 'Logs']);
+
         $this->setup(
             array('notNullValidations' => false) //switch off
         );
