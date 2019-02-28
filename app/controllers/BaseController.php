@@ -6,7 +6,7 @@ use Phalcon\Mvc\Controller;
 
 class BaseController extends Controller {
 
-    function successResponse($model, int $httpCode = 200): \Phalcon\Http\Response
+    function successResponse($model = null, int $httpCode = 200): \Phalcon\Http\Response
     {    
         $this->response->setStatusCode($httpCode);
         $this->response->setJsonContent(
@@ -24,7 +24,7 @@ class BaseController extends Controller {
     function errorResponse(\Phalcon\Mvc\Model $model, int $httpCode = 409): \Phalcon\Http\Response
     {
         // Change the HTTP status
-        $this->response->setStatusCode(409);
+        $this->response->setStatusCode($httpCode);
     
         // Send errors to the client
         $errors = [];

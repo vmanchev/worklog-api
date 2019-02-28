@@ -236,7 +236,7 @@
 							"raw": "{\n        \"name\": \"Test project 333\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/log?project_id=1",
+							"raw": "{{baseUrl}}/log?project_id=5",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -246,7 +246,7 @@
 							"query": [
 								{
 									"key": "project_id",
-									"value": "1"
+									"value": "5"
 								}
 							]
 						}
@@ -281,6 +281,40 @@
 							],
 							"path": [
 								"log"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete log entry",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"user_id\": 2,\n        \"project_id\": 5,\n        \"start\": \"2019-02-28T17:00:00\",\n        \"end\": \"2019-02-28T18:00:00\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/log/24",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"log",
+								"24"
 							]
 						}
 					},

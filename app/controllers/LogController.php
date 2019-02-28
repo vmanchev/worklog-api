@@ -46,7 +46,51 @@ class LogController extends BaseController
           return $this->successResponse(LogModel::searchWithParams($queryParams));
         }
 
-        $logs = (new LogModel())->userParticipatesInProjects($this->auth->data('user')->id);
-        return $this->successResponse($logs);
+        return $this->successResponse(
+          (new LogModel())->searchWithinParticipatingProjects($this->auth->data('user')->id)
+        );
+    }
+
+    /**
+     * Deletes a log entry
+     * 
+     * It should either the log entry author or project admin
+     * 
+     * @params int $id
+     */
+    public function delete(int $id) {
+
+      $log = LogModel::findFirst($id);
+
+      // invalid id
+      if (!$log) {
+        return $this->errorResponse(new LogModel(), 404);
+      }
+      
+      // current user is worklog author
+      if ($log->user_id === $this->auth->data('user')->id) {
+        return $this->deleteLog($log);
+      }
+
+      // find the project owner
+      $project = ProjectModel::findFirst($log->project_id);
+
+      // delete only if current user is project owner
+      if ($project->user_id === $this->auth->data('user')->id) {
+        return $this->deleteLog($log);
+      }
+
+      return $this->errorResponse($log);
+    }
+
+    /**
+     * Perform the deletion and return relevant response
+     */
+    private function deleteLog(\Worklog\Models\Log $log) {
+      if ($log->delete()) {
+        return $this->successResponse();
+      }
+
+      return $this->errorResponse($log);
     }
 }
