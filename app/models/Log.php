@@ -97,8 +97,8 @@ class Log extends Model
 
     /**
      * Search for worklogs
-     * 
-     * @params array $params Associative array, which could 
+     *
+     * @params array $params Associative array, which could
      * have 2 possible keys - user_id and/or project_id
      * @return array Array of worklog entries
      */
@@ -130,17 +130,14 @@ class Log extends Model
     }
 
     /**
-     * Worklog entries for user own and/or participating projects
-     * 
-     * When request for GET /log arrives, we need to find the projects 
-     * in which the current user participates in, either as user who 
-     * logs time or as project administrator. 
-     * 
-     * Once we have the project id list, we'll return all worklog entries
-     * for these projects
-     * 
+     * IDs of projects, current user participates in
+     *
+     * When request for GET /log arrives, we need to find the projects
+     * in which the current user participates in, either as user who
+     * logs time or as project administrator.
+     *
      * @params int $user_id
-     * @return array Array of worklog entries
+     * @return array Array of project ids
      */
     public function userParticipatesInProjects(int $user_id): array
     {
@@ -162,10 +159,19 @@ class Log extends Model
             return $project['project_id'];
         }, $projectIds);
 
-        $projectIds = array_unique($projectIds);
+        return array_unique($projectIds);
+    }
 
+    /**
+     * Worklog entries for user own and/or participating projects
+     * 
+     * @params int $user_id
+     * @return array Worklog entries
+     */
+    public function searchWithinParticipatingProjects(int $user_id)
+    {
         $logs = $this->find([
-            'conditions' => 'project_id in (' . implode(', ', $projectIds) . ')',
+            'conditions' => 'project_id in (' . implode(', ', $this->userParticipatesInProjects($user_id)) . ')',
             'order' => ['project_id', 'start', 'end'],
         ]);
 
