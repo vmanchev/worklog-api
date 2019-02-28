@@ -5,6 +5,7 @@ namespace Worklog\Controllers;
 use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
 use Worklog\Models\Project as ProjectModel;
+use Worklog\Models\User as UserModel;
 use Worklog\Utils\Template;
 
 class ProjectController extends BaseController
@@ -26,4 +27,5 @@ class ProjectController extends BaseController
         return $this->errorResponse($projectModel);
     }
 
+    
 }

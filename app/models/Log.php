@@ -3,6 +3,7 @@
 namespace Worklog\Models;
 
 use Phalcon\Mvc\Model;
+use Phalcon\Mvc\Model\Resultset\Simple as Resultset;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
 
@@ -92,5 +93,82 @@ class Log extends Model
         );
 
         return $this->validate($validator);
+    }
+
+    /**
+     * Search for worklogs
+     * 
+     * @params array $params Associative array, which could 
+     * have 2 possible keys - user_id and/or project_id
+     * @return array Array of worklog entries
+     */
+    public static function searchWithParams(array $params): array
+    {
+
+        $conditions = [];
+        $bind = [];
+
+        if (isset($params['user_id']) && $params['user_id'] > 0) {
+            $conditions[] = 'user_id = :user_id:';
+            $bind['user_id'] = $params['user_id'];
+        }
+
+        if (isset($params['project_id']) && $params['project_id'] > 0) {
+            $conditions[] = 'project_id = :project_id:';
+            $bind['project_id'] = $params['project_id'];
+        }
+
+        if (!empty($conditions)) {
+            $logs = self::find([
+                'conditions' => implode(' AND ', $conditions),
+                'order' => ['start', 'end'],
+                'bind' => $bind,
+            ]);
+            return $logs->count() ? $logs->toArray() : [];
+        }
+
+    }
+
+    /**
+     * Worklog entries for user own and/or participating projects
+     * 
+     * When request for GET /log arrives, we need to find the projects 
+     * in which the current user participates in, either as user who 
+     * logs time or as project administrator. 
+     * 
+     * Once we have the project id list, we'll return all worklog entries
+     * for these projects
+     * 
+     * @params int $user_id
+     * @return array Array of worklog entries
+     */
+    public function userParticipatesInProjects(int $user_id): array
+    {
+        $sql = '(select id as project_id from project where user_id = ?)
+                union
+              (select project_id from log where user_id = ?)';
+
+        $projectIds = (new Resultset(
+            null,
+            $this,
+            $this->getReadConnection()->query($sql, [$user_id, $user_id])
+        ))->toArray();
+
+        if (empty($projectIds)) {
+            return $projectIds;
+        }
+
+        $projectIds = array_map(function ($project) {
+            return $project['project_id'];
+        }, $projectIds);
+
+        $projectIds = array_unique($projectIds);
+
+        $logs = $this->find([
+            'conditions' => 'project_id in (' . implode(', ', $projectIds) . ')',
+            'order' => ['project_id', 'start', 'end'],
+        ]);
+
+        return $logs->count() ? $logs->toArray() : [];
     }
 }

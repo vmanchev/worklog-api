@@ -42,6 +42,7 @@ try {
     $projectCollection->setPrefix('/project');
 
     $projectCollection->post('/', 'create');
+    $projectCollection->get('/', 'search');
 
     $app->mount($projectCollection);
 
@@ -52,6 +53,7 @@ try {
     $logCollection->setPrefix('/log');
 
     $logCollection->post('/', 'create');
+    $logCollection->get('/', 'search');
 
     $app->mount($logCollection);
     ###################################################################

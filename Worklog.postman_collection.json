@@ -63,7 +63,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"manchev@prodio.bg\",\n\t\"password\": \"TBe5GW4r9u2AZp1D\"\n}"
+							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"password\": \"BibYbXWMWeeNFUoN\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user/login",
@@ -125,7 +125,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"id\": \"2\",\n        \"email\": \"manchev@prodio.bg\",\n        \"firstName\": \"Ringo\",\n        \"lastName\": \"Starr\"\n}"
+							"raw": "{\n        \"id\": \"1\",\n        \"password\": \"qwerty\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user",
@@ -212,6 +212,48 @@
 			"name": "Log",
 			"item": [
 				{
+					"name": "Search logs",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n        \"name\": \"Test project 333\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/log?project_id=1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"log"
+							],
+							"query": [
+								{
+									"key": "project_id",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
 					"name": "Log time",
 					"request": {
 						"method": "POST",
@@ -230,7 +272,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"name\": \"Test project 333\"\n}"
+							"raw": "{\n        \"user_id\": 2,\n        \"project_id\": 5,\n        \"start\": \"2019-02-28T17:00:00\",\n        \"end\": \"2019-02-28T18:00:00\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/log",
