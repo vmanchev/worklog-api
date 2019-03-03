@@ -83,6 +83,27 @@ class LogController extends BaseController
       return $this->errorResponse($log);
     }
 
+    public function update(int $id) {
+
+      $currentUser = $this->auth->data('user')->id;
+
+      $logData = (array) $this->request->getJsonRawBody();
+      $logData['id'] = $id;
+
+      $logModel = LogModel::findFirst($id);
+
+      if (!$logModel) {
+        return $this->errorResponse(new LogModel(), 404);
+      }
+
+      if ($logModel->update($logData, ['start', 'end'])) {
+          return $this->successResponse($logModel, 200);
+      }
+      
+      return $this->errorResponse($logModel);
+
+    }
+
     /**
      * Perform the deletion and return relevant response
      */

@@ -19,7 +19,7 @@ class Project extends Model
     public $id;
 
     /**
-     *
+     * Owner (administrator) of this project
      * @var integer
      * @Column(column="user_id", type="integer", length=10, nullable=false)
      */

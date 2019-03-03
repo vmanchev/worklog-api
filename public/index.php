@@ -55,6 +55,7 @@ try {
     $logCollection->post('/', 'create');
     $logCollection->get('/', 'search');
     $logCollection->delete('/{id}', 'delete');
+    $logCollection->put('/{id}', 'update');
 
     $app->mount($logCollection);
     ###################################################################
