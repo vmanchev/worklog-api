@@ -55,7 +55,6 @@ try {
 
     $teamCollection->post('/', 'create');
     $teamCollection->get('/', 'search');
-    $teamCollection->get('/{user_id}', 'profile');
     $teamCollection->put('/{user_id}', 'update');
     $teamCollection->delete('/{user_id}', 'delete');
 

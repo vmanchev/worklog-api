@@ -151,31 +151,50 @@ class Log extends BaseModel
      * have 2 possible keys - user_id and/or project_id
      * @return array Array of worklog entries
      */
-    public static function searchWithParams(array $params): array
+    public function searchWithParams(array $params): array
     {
 
         $conditions = [];
         $bind = [];
 
-        if (isset($params['user_id']) && $params['user_id'] > 0) {
-            $conditions[] = 'user_id = :user_id:';
-            $bind['user_id'] = $params['user_id'];
+        $defaultParams = ['project_id' => null, 'user_id' => null];
+        $params = array_merge($defaultParams, $params);
+        $params = array_map('intval', $params);
+
+        if ($params['project_id'] > 0 && $params['user_id'] > 0) {
+          $query = $this->modelsManager->createQuery(
+            'select * from Worklog\Models\Log l 
+              where 
+                l.user_id = :user_id: and 
+                l.project_id = :project_id: and 
+                l.project_id in (
+                  select pt.project_id from Worklog\Models\ProjectTeam pt 
+                    where pt.user_id = :auth_user_id:
+                  )'
+          );
+        } elseif ($params['project_id'] > 0 && $params['user_id'] === 0) {
+          $query = $this->modelsManager->createQuery(
+            'select * from Worklog\Models\Log l 
+              where 
+                l.project_id = :project_id: and 
+                l.project_id in (
+                  select pt.project_id from Worklog\Models\ProjectTeam pt 
+                    where pt.user_id = :auth_user_id:
+                  )'
+          );
+        } elseif ($params['project_id'] === 0 && $params['user_id'] > 0) {
+          $query = $this->modelsManager->createQuery(
+            'select * from Worklog\Models\Log l 
+              where 
+                l.user_id = :user_id: and 
+                l.project_id in (
+                  select pt.project_id from Worklog\Models\ProjectTeam pt 
+                    where pt.user_id = :auth_user_id:
+                  )'
+          );
         }
 
-        if (isset($params['project_id']) && $params['project_id'] > 0) {
-            $conditions[] = 'project_id = :project_id:';
-            $bind['project_id'] = $params['project_id'];
-        }
-
-        if (!empty($conditions)) {
-            $logs = self::find([
-                'conditions' => implode(' AND ', $conditions),
-                'order' => ['start', 'end'],
-                'bind' => $bind,
-            ]);
-            return $logs->count() ? $logs->toArray() : [];
-        }
-
+        return $query->execute(array_filter($params))->toArray();
     }
 
     /**

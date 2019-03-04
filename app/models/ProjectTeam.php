@@ -3,14 +3,13 @@
 namespace Worklog\Models;
 
 use Phalcon\Validation;
+use Phalcon\Validation\Validator\InclusionIn;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Uniqueness;
-use Phalcon\Validation\Validator\InclusionIn;
 use Worklog\Models\Base as BaseModel;
 
 class ProjectTeam extends BaseModel
 {
-
     /**
      *
      * @var integer
@@ -91,5 +90,49 @@ class ProjectTeam extends BaseModel
         );
 
         return $this->validate($validator);
+    }
+
+    public static function getTeamMember(int $project_id, int $user_id)
+    {
+        return self::findFirst([
+            'conditions' => 'project_id = :project_id: AND user_id = :user_id:',
+            'bind' => [
+                'project_id' => $project_id,
+                'user_id' => $user_id,
+            ],
+        ]);
+    }
+
+    public static function isTeamMember(int $project_id, int $user_id): bool
+    {
+        return !!self::findFirst([
+            'conditions' => 'project_id = :project_id: AND user_id = :user_id:',
+            'bind' => [
+                'project_id' => $project_id,
+                'user_id' => $user_id,
+            ],
+        ]);
+    }
+
+    public static function isTeamManager(int $project_id, int $user_id): bool
+    {
+        return self::isTeamMemberByRole($project_id, $user_id, 'ROLE_MANAGER');
+    }
+
+    public static function isTeamAdmin(int $project_id, int $user_id): bool
+    {
+        return self::isTeamMemberByRole($project_id, $user_id, 'ROLE_ADMIN');
+    }
+
+    private static function isTeamMemberByRole(int $project_id, int $user_id, string $role): bool
+    {
+        return !!self::findFirst([
+            'conditions' => 'project_id = :project_id: AND user_id = :user_id: AND role = :role:',
+            'bind' => [
+                'project_id' => $project_id,
+                'user_id' => $user_id,
+                'role' => $role,
+            ],
+        ]);
     }
 }
