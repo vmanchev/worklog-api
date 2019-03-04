@@ -2,11 +2,10 @@
 
 namespace Worklog\Controllers;
 
-use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
 use Worklog\Models\Project as ProjectModel;
 use Worklog\Models\User as UserModel;
-use Worklog\Utils\Template;
+use Worklog\Service\ReportGenerator;
 
 class ProjectController extends BaseController
 {
@@ -27,5 +26,23 @@ class ProjectController extends BaseController
         return $this->errorResponse($projectModel);
     }
 
-    
+    public function report($id)
+    {
+        // make sure the current logged user has access to this project
+        $project = ProjectModel::findFirst($id);
+
+        if (!$project) {
+            return $this->errorResponse(new ProjectModel(), 404);
+        }
+
+        if (!in_array($project->id, $project->getProjectIdsForParticipant($this->auth->data('user')->id))) {
+            return $this->errorResponse($project, 403);
+        }
+
+        $user = UserModel::findFirst($this->auth->data('user')->id);
+
+        $reportGenerator = new ReportGenerator($project, $user);
+
+        $reportGenerator->generate()->download();
+    }
 }

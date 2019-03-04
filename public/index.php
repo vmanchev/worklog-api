@@ -43,6 +43,7 @@ try {
 
     $projectCollection->post('/', 'create');
     $projectCollection->get('/', 'search');
+    $projectCollection->get('/{id}/report', 'report');
 
     $app->mount($projectCollection);
 

@@ -49,6 +49,13 @@ class Log extends BaseModel
     public $end;
 
     /**
+     *
+     * @var int
+     * @Column(column="elapsed", type="integer", nullable=false)
+     */
+    public $elapsed;
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
@@ -59,6 +66,10 @@ class Log extends BaseModel
         $this->setup(
             array('notNullValidations' => false) //switch off
         );
+    }
+
+    public function beforeValidation() {
+      $this->elapsed = strtotime($this->end) - strtotime($this->start);
     }
 
     public function validation()
@@ -151,5 +162,12 @@ class Log extends BaseModel
         ]);
 
         return $logs->count() ? $logs->toArray() : [];
+    }
+
+    public static function displayTime(int $time): string {
+
+      $hours = floor($time / 3600);
+      $minutes = floor(($time / 60) % 60);
+      return $hours . ':' . $minutes;
     }
 }
