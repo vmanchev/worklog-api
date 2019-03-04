@@ -7,16 +7,30 @@ use Worklog\Models\ProjectTeam as TeamModel;
 
 class TeamController extends BaseController
 {
+    /**
+     * List of team members for a selected project
+     */
     public function search(int $project_id)
     {
+        if (!TeamModel::isTeamMember($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse(null, 403);
+        }
+
         return $this->successResponse(
             TeamModel::findByProjectId($project_id)->toArray(),
             200
         );
     }
 
+    /**
+     * Add new member to a team
+     */
     public function create(int $project_id)
     {
+        if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse(null, 403);
+        }
+
         $memberData = (array) $this->request->getJsonRawBody();
         $memberData['project_id'] = $project_id;
 
@@ -29,25 +43,18 @@ class TeamController extends BaseController
         return $this->errorResponse($teamModel);
     }
 
-    public function profile(int $project_id, int $user_id)
-    {
-        $teamMember = $this->getTeamMember($project_id, $user_id);
-
-        if ($teamMember) {
-            return $this->successResponse($teamMember, 200);
-        }
-
-        return $this->errorResponse($teamMember);
-    }
-
     public function update(int $project_id, int $user_id)
     {
+        if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse(null, 403);
+        }
+
         $memberData = (array) $this->request->getJsonRawBody();
 
-        $teamModel = $this->getTeamMember($project_id, $user_id);
+        $teamModel = TeamModel::getTeamMember($project_id, $user_id);
 
         if (!$teamModel) {
-            return $this->errorResponse($teamMember, 404);
+            return $this->errorResponse(null, 404);
         }
 
         $status = $teamModel->update($memberData, ['role']);
@@ -60,7 +67,11 @@ class TeamController extends BaseController
 
     public function delete(int $project_id, int $user_id)
     {
-        $teamMember = $this->getTeamMember($project_id, $user_id);
+        if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse(null, 403);
+        }
+
+        $teamMember = TeamModel::getTeamMember($project_id, $user_id);
 
         if (!$teamMember) {
             return $this->errorResponse(['project_id.invalid', 'user_id.invalid'], 404);
@@ -71,16 +82,5 @@ class TeamController extends BaseController
         }
 
         return $this->errorResponse($teamMember);
-    }
-
-    private function getTeamMember(int $project_id, int $user_id)
-    {
-        return TeamModel::findFirst([
-            'conditions' => 'project_id = :project_id: and user_id = :user_id:',
-            'bind' => [
-                'project_id' => $project_id,
-                'user_id' => $user_id,
-            ],
-        ]);
     }
 }

@@ -19,13 +19,6 @@ class Project extends BaseModel
     public $id;
 
     /**
-     * Owner (administrator) of this project
-     * @var integer
-     * @Column(column="user_id", type="integer", length=10, nullable=false)
-     */
-    public $user_id;
-
-    /**
      *
      * @var string
      * @Column(column="name", type="string", length=255, nullable=false)
@@ -37,13 +30,6 @@ class Project extends BaseModel
      */
     public function initialize()
     {
-        $this->belongsTo('user_id', '\Worklog\Models\User', 'id', [
-            'alias' => 'User',
-            'foreignKey' => [
-                'message' => 'user_id.invalid',
-            ],
-        ]);
-
         $this->hasMany(
           'id', 
           '\Worklog\Models\Log', 
@@ -58,7 +44,7 @@ class Project extends BaseModel
           '\Worklog\Models\ProjectTeam', 
           'project_id', 
           [
-            'alias' => 'ProjectTeams'
+            'alias' => 'teamMember'
           ]
         );
 
@@ -75,13 +61,6 @@ class Project extends BaseModel
             'name',
             new PresenceOf([
                 'message' => 'name.required',
-            ])
-        );
-
-        $validator->add(
-            'user_id',
-            new PresenceOf([
-                'message' => 'user_id.required',
             ])
         );
 
