@@ -5,8 +5,8 @@ namespace Worklog\Models;
 use Phalcon\Mvc\Model;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator\PresenceOf;
-
-class Project extends Model
+use Worklog\Models\Base as BaseModel;
+class Project extends BaseModel
 {
 
     /**

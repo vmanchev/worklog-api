@@ -63,4 +63,8 @@ class User extends Model
 
         return $this->validate($validator);
     }
+
+    public function getFullName() : string {
+      return $this->firstName . ' ' . $this->lastName;
+    }
 }

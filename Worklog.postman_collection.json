@@ -63,7 +63,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"password\": \"BibYbXWMWeeNFUoN\"\n}"
+							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"password\": \"qwerty\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user/login",
@@ -205,6 +205,44 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Report",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/project/5/report",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"project",
+								"5",
+								"report"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -236,18 +274,12 @@
 							"raw": "{\n        \"name\": \"Test project 333\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/log?project_id=5",
+							"raw": "{{baseUrl}}/log",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"log"
-							],
-							"query": [
-								{
-									"key": "project_id",
-									"value": "5"
-								}
 							]
 						}
 					},
@@ -272,7 +304,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"user_id\": 2,\n        \"project_id\": 5,\n        \"start\": \"2019-02-28T17:00:00\",\n        \"end\": \"2019-02-28T18:00:00\"\n}"
+							"raw": "{\n        \"project_id\": 5,\n        \"start\": \"2019-02-28T17:00:00\",\n        \"end\": \"2019-02-28T18:45:00\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/log",
@@ -315,6 +347,40 @@
 							"path": [
 								"log",
 								"24"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update log entry",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"type": "text",
+								"value": "Bearer {{accessToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"name": "Content-Type",
+								"type": "text",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n            \"project_id\": \"4\",\n            \"user_id\": \"2\",\n            \"start\": \"2019-03-21 10:30:00\",\n            \"end\": \"2019-03-21 11:30:00\"\n        }"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/log/1",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"log",
+								"1"
 							]
 						}
 					},
