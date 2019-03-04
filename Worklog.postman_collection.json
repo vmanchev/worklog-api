@@ -304,7 +304,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"project_id\": 5,\n        \"start\": \"2019-02-28T17:00:00\",\n        \"end\": \"2019-02-28T18:45:00\"\n}"
+							"raw": "{\n        \"project_id\": 5,\n        \"start\": \"2019-02-28T17:00:00\",\n        \"end\": \"2019-02-28T18:45:00\",\n        \"description\": \"user module code refactoring\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/log",
@@ -371,16 +371,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n            \"project_id\": \"4\",\n            \"user_id\": \"2\",\n            \"start\": \"2019-03-21 10:30:00\",\n            \"end\": \"2019-03-21 11:30:00\"\n        }"
+							"raw": "{\n    \"id\": \"32\",\n    \"project_id\": 5,\n    \"user_id\": \"1\",\n    \"start\": \"2019-02-28T17:00:00\",\n    \"end\": \"2019-02-28T18:46:00\",\n    \"elapsed\": 6300,\n    \"description\": \"code refactoring\"\n\t\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/log/1",
+							"raw": "{{baseUrl}}/log/32",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"log",
-								"1"
+								"32"
 							]
 						}
 					},
