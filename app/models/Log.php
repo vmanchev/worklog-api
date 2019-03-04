@@ -4,9 +4,11 @@ namespace Worklog\Models;
 
 use Phalcon\Mvc\Model;
 use Phalcon\Validation;
+use Phalcon\Validation\Validator\Date as DateValidator;
 use Phalcon\Validation\Validator\PresenceOf;
 use Worklog\Models\Base as BaseModel;
 use Worklog\Validators\AccessEditLog;
+use Worklog\Validators\EndDate;
 
 class Log extends BaseModel
 {
@@ -74,8 +76,9 @@ class Log extends BaseModel
         );
     }
 
-    public function beforeValidation() {
-      $this->elapsed = strtotime($this->end) - strtotime($this->start);
+    public function beforeValidation()
+    {
+        $this->elapsed = strtotime($this->end) - strtotime($this->start);
     }
 
     public function validation()
@@ -111,10 +114,31 @@ class Log extends BaseModel
         );
 
         $validator->add(
+            'start',
+            new DateValidator([
+                'format' => 'Y-m-d H:i:s',
+                'message' => 'start.format',
+            ])
+        );
+
+        $validator->add(
             'end',
             new PresenceOf([
                 'message' => 'end.required',
             ])
+        );
+
+        $validator->add(
+            'end',
+            new DateValidator([
+                'format' => 'Y-m-d H:i:s',
+                'message' => 'end.format',
+            ])
+        );
+
+        $validator->add(
+            'end',
+            new EndDate()
         );
 
         return $this->validate($validator);
@@ -170,10 +194,11 @@ class Log extends BaseModel
         return $logs->count() ? $logs->toArray() : [];
     }
 
-    public static function displayTime(int $time): string {
+    public static function displayTime(int $time): string
+    {
 
-      $hours = floor($time / 3600);
-      $minutes = floor(($time / 60) % 60);
-      return $hours . ':' . $minutes;
+        $hours = floor($time / 3600);
+        $minutes = floor(($time / 60) % 60);
+        return $hours . ':' . $minutes;
     }
 }
