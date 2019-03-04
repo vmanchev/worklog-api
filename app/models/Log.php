@@ -194,10 +194,7 @@ class Log extends BaseModel
           );
         }
 
-        $result = $query->execute(array_filter($params));
-
-        print_r($result->toArray());exit;
-
+        return $query->execute(array_filter($params))->toArray();
     }
 
     /**
