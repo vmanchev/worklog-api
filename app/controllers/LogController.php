@@ -39,7 +39,7 @@ class LogController extends BaseController
      * When project_id is not provided, only logs for projects where current user
      * paraticipates (either as user or admin), will be returned.
      */
-    public function search(int $project_id)
+    public function search()
     {
         $queryParams = $this->request->getQuery();
 
@@ -47,12 +47,12 @@ class LogController extends BaseController
         array_shift($queryParams);
 
         if (!empty($queryParams)) {
-            return $this->successResponse(LogModel::searchWithParams($queryParams));
+            $queryParams['auth_user_id'] = $this->auth->data('user')->id;
+            return $this->successResponse((new LogModel())->searchWithParams($queryParams));
         }
 
-        return $this->successResponse(
-            (new LogModel())->searchWithinParticipatingProjects($this->auth->data('user')->id)
-        );
+        // no query parameters, return results for authenticated user only
+        return $this->successResponse(LogModel::findByUserId($this->auth->data('user')->id));
     }
 
     /**
