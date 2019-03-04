@@ -7,6 +7,7 @@ use Phalcon\Mvc\Micro;
 use Phalcon\Mvc\Micro\Collection as MicroCollection;
 use Worklog\Controllers\LogController;
 use Worklog\Controllers\ProjectController;
+use Worklog\Controllers\TeamController;
 use Worklog\Controllers\UserController;
 
 error_reporting(E_ALL);
@@ -46,6 +47,19 @@ try {
     $projectCollection->get('/{id}/report', 'report');
 
     $app->mount($projectCollection);
+
+    ###################################################################
+    $teamCollection = new MicroCollection();
+    $teamCollection->setHandler(new TeamController());
+    $teamCollection->setPrefix('/project/{project_id}/team');
+
+    $teamCollection->post('/', 'create');
+    $teamCollection->get('/', 'search');
+    $teamCollection->get('/{user_id}', 'profile');
+    $teamCollection->put('/{user_id}', 'update');
+    $teamCollection->delete('/{user_id}', 'delete');
+
+    $app->mount($teamCollection);    
 
     ###################################################################
 
