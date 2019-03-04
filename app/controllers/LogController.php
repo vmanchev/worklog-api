@@ -96,7 +96,7 @@ class LogController extends BaseController
         return $this->errorResponse(new LogModel(), 404);
       }
 
-      if ($logModel->update($logData, ['start', 'end'])) {
+      if ($logModel->update($logData, ['start', 'end', 'description'])) {
           return $this->successResponse($logModel, 200);
       }
       

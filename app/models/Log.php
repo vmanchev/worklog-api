@@ -56,6 +56,12 @@ class Log extends BaseModel
     public $elapsed;
 
     /**
+     * @var string
+     * @Column(column="description", type="varchar", nullable=true)
+     */
+    public $description;
+
+    /**
      * Initialize method for model.
      */
     public function initialize()
