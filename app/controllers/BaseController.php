@@ -21,7 +21,7 @@ class BaseController extends Controller {
         return $this->response;
     }
     
-    function errorResponse(\Phalcon\Mvc\Model $model, int $httpCode = 409): \Phalcon\Http\Response
+    function errorResponse($model, int $httpCode = 409): \Phalcon\Http\Response
     {
         // Change the HTTP status
         $this->response->setStatusCode($httpCode);
@@ -29,9 +29,14 @@ class BaseController extends Controller {
         // Send errors to the client
         $errors = [];
     
-        foreach ($model->getMessages() as $message) {
-            $errors[] = $message->getMessage();
+        if($model instanceof \Phalcon\Mvc\Model) {
+          foreach ($model->getMessages() as $message) {
+              $errors[] = $message->getMessage();
+          }
+        } else {
+          $errors = $model;
         }
+
     
         $this->response->setJsonContent(
             [

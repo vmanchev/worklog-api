@@ -53,6 +53,15 @@ class Project extends BaseModel
           ]
         );
 
+        $this->hasMany(
+          'id', 
+          '\Worklog\Models\ProjectTeam', 
+          'project_id', 
+          [
+            'alias' => 'ProjectTeams'
+          ]
+        );
+
         $this->setup(
             array('notNullValidations' => false) //switch off
         );

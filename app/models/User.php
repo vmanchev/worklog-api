@@ -13,6 +13,7 @@ class User extends Model
     public function initialize()
     {
       $this->hasMany('id', '\Worklog\Models\Project', 'user_id', ['alias' => 'Projects']);
+      $this->hasMany('id', '\Worklog\Models\ProjectTeam', 'user_id', ['alias' => 'ProjectTeams']);
       $this->hasMany('id', '\Worklog\Models\Log', 'user_id', ['alias' => 'Logs']);
 
         $this->setup(
