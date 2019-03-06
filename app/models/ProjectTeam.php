@@ -6,7 +6,9 @@ use Phalcon\Validation;
 use Phalcon\Validation\Validator\InclusionIn;
 use Phalcon\Validation\Validator\PresenceOf;
 use Phalcon\Validation\Validator\Uniqueness;
+use Phalcon\Validation\Validator\Callback;
 use Worklog\Models\Base as BaseModel;
+use Worklog\Models\User as UserModel;
 
 class ProjectTeam extends BaseModel
 {
@@ -64,6 +66,16 @@ class ProjectTeam extends BaseModel
             'user_id',
             new PresenceOf([
                 'message' => 'user_id.required',
+            ])
+        );
+
+        $validator->add(
+            'user_id',
+            new Callback([
+                'message' => 'user_id.invalid',
+                'callback' => function($model) {
+                  return !!UserModel::findFirst($model->user_id);
+                }
             ])
         );
 

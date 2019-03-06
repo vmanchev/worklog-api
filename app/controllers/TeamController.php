@@ -40,7 +40,7 @@ class TeamController extends BaseController
         $status = $teamModel->save($memberData);
 
         if ($status === true) {
-            $this->sendEmailToTeamMember($project_id, $user_id, 'add-team-member');
+            $this->sendEmailToTeamMember($project_id, $memberData['user_id'], 'add-team-member');
             return $this->successResponse($teamModel, 201);
         }
         return $this->errorResponse($teamModel);
