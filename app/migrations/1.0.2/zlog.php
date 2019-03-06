@@ -8,7 +8,7 @@ use Phalcon\Mvc\Model\Migration;
 /**
  * Class LogMigration_102
  */
-class LogMigration_102 extends Migration
+class ZLogMigration_102 extends Migration
 {
     /**
      * Define the table structure

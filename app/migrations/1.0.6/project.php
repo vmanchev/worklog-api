@@ -17,6 +17,8 @@ class ProjectMigration_106 extends Migration
      */
     public function morph()
     {
+        $this->getConnection()->dropForeignKey('project', null, 'project_ibfk_1');
+
         $this->morphTable('project', [
                 'columns' => [
                     new Column(
@@ -60,7 +62,7 @@ class ProjectMigration_106 extends Migration
      */
     public function up()
     {
-
+        
     }
 
     /**
