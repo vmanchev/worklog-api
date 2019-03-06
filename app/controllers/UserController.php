@@ -125,6 +125,49 @@ class UserController extends BaseController
     }
 
     /**
+     * Get user by id
+     * 
+     * @param int $id User id
+     */
+    public function profile(int $id) {
+
+        $user = UserModel::findFirst($id);
+
+        if ($user) {
+            return $this->successResponse($user);
+          }
+  
+          return $this->errorResponse(null, 404);
+    }
+
+    /**
+     * Search users by keyword
+     */
+    public function search() {
+
+        $keyword = $this->request->getQuery('keyword', 'alnum', null);
+
+        if (!$keyword || strlen($keyword) < 3) {
+            return $this->errorResponse(['keyword.minLength']);
+        }
+
+        $result = UserModel::find([
+            'conditions' => 'email like :email:',
+            'bind' => [
+                'email' => '%' . $keyword . '%'
+            ]
+        ])->toArray();
+
+        if (!$result) {
+            return $this->errorResponse($result);
+        }
+
+        $responseCode = strlen($result) ? 200 : 404;
+
+        return $this->successResponse($result, $responseCode);
+    }
+
+    /**
      * Password generator
      *
      * @return string
