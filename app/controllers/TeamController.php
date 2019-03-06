@@ -34,6 +34,29 @@ class TeamController extends BaseController
         }
 
         $memberData = (array) $this->request->getJsonRawBody();
+
+        if (!$memberData['user_id']) {
+
+            if (!$memberData['email'] && !$memberData['firstName'] && !$memberData['lastName']) {
+                return $this->errorResponse([
+                    'email.required',
+                    'firstName.required',
+                    'lastName.required',
+                ], 409);
+            }
+
+            $memberData['adminNames'] = UserModel::findFirst($this->auth->data('user')->id)->getFullName();
+            $memberData['projectName'] = ProjectModel::findFirst($project_id)->name;
+
+            $userModel = $this->register($memberData, true);
+
+            if ($userModel->validationHasFailed()) {
+                return $this->errorResponse($userModel, 409);
+            }
+
+            $memberData['user_id'] = $userModel->id;
+        }
+
         $memberData['project_id'] = $project_id;
 
         $teamModel = new TeamModel();

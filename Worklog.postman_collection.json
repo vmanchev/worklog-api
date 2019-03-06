@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"user1@test.com\",\n\t\"firstName\": \"asdf\",\n\t\"lastName\": \"asdfgg\"\n}"
+							"raw": "{\n\t\"email\": \"wlu5@yopmail.com\",\n\t\"firstName\": \"Elvis\",\n\t\"lastName\": \"Presley\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user",
@@ -306,16 +306,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"user_id\": 3,\n\t\"role\": \"ROLE_USER\"\n}"
+							"raw": "{\n\t\"email\": \"wlu10@yopmail.com\",\n\t\"firstName\": \"Vassil\",\n\t\"lastName\": \"Naydenov\",\n\t\"role\": \"ROLE_USER\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/project/5/team",
+							"raw": "{{baseUrl}}/project/6/team",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"project",
-								"5",
+								"6",
 								"team"
 							]
 						}
@@ -381,7 +381,7 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/project/6/team/3",
+							"raw": "{{baseUrl}}/project/6/team/6",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -389,7 +389,7 @@
 								"project",
 								"6",
 								"team",
-								"3"
+								"6"
 							]
 						},
 						"description": "Delete a team member by passing projectId and userId"

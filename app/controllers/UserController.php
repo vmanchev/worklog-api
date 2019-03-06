@@ -4,7 +4,6 @@ namespace Worklog\Controllers;
 
 use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
-use Worklog\Models\User as UserModel;
 
 class UserController extends BaseController
 {
@@ -13,21 +12,13 @@ class UserController extends BaseController
     {
         $userData = (array) $this->request->getJsonRawBody();
 
-        $userData['plainTextPassword'] = $this->generatePassword();
+        $userModel = $this->register($userData);
 
-        $userData['password'] = $this->security->hash($userData['plainTextPassword']);
-
-        $userModel = new UserModel();
-        $status = $userModel->save($userData);
-
-        if ($status === true) {
-
-            $this->sendEmail('register', 'Your password', $userData);
-
-            $userModel->password = null;
-            return $this->successResponse($userModel, 201);
+        if ($userModel->validationHasFailed()) {
+            return $this->errorResponse($userModel);
         }
-        return $this->errorResponse($userModel);
+
+        return $this->successResponse($userModel, 201);
     }
 
     public function login()
@@ -115,8 +106,8 @@ class UserController extends BaseController
         $result = $userModel->save($userData);
 
         if ($result) {
-          $userData['password'] = null;
-          return $this->successResponse($userData);
+            $userData['password'] = null;
+            return $this->successResponse($userData);
         }
 
         return $this->errorResponse($userModel);
@@ -124,24 +115,26 @@ class UserController extends BaseController
 
     /**
      * Get user by id
-     * 
+     *
      * @param int $id User id
      */
-    public function profile(int $id) {
+    public function profile(int $id)
+    {
 
         $user = UserModel::findFirst($id);
 
         if ($user) {
             return $this->successResponse($user);
-          }
-  
-          return $this->errorResponse(null, 404);
+        }
+
+        return $this->errorResponse(null, 404);
     }
 
     /**
      * Search users by keyword
      */
-    public function search() {
+    public function search()
+    {
 
         $keyword = $this->request->getQuery('keyword', 'alnum', null);
 
@@ -152,8 +145,8 @@ class UserController extends BaseController
         $result = UserModel::find([
             'conditions' => 'email like :email:',
             'bind' => [
-                'email' => '%' . $keyword . '%'
-            ]
+                'email' => '%' . $keyword . '%',
+            ],
         ])->toArray();
 
         if (!$result) {
@@ -163,17 +156,6 @@ class UserController extends BaseController
         $responseCode = strlen($result) ? 200 : 404;
 
         return $this->successResponse($result, $responseCode);
-    }
-
-    /**
-     * Password generator
-     *
-     * @return string
-     * @see https://docs.phalconphp.com/3.4/en/api/Phalcon_Security_Random
-     */
-    private function generatePassword(): string
-    {
-        return (new \Phalcon\Security\Random())->base58();
     }
 
 }

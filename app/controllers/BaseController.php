@@ -4,11 +4,13 @@ namespace Worklog\Controllers;
 
 use Phalcon\Mvc\Controller;
 use Worklog\Utils\Template as EmailTemplate;
+use Worklog\Models\User as UserModel;
 
-class BaseController extends Controller {
+class BaseController extends Controller
+{
 
-    function successResponse($model = null, int $httpCode = 200): \Phalcon\Http\Response
-    {    
+    public function successResponse($model = null, int $httpCode = 200): \Phalcon\Http\Response
+    {
         $this->response->setStatusCode($httpCode);
         $this->response->setJsonContent(
             [
@@ -18,34 +20,33 @@ class BaseController extends Controller {
                 ),
             ]
         );
-    
+
         return $this->response;
     }
-    
-    function errorResponse($model, int $httpCode = 409): \Phalcon\Http\Response
+
+    public function errorResponse($model, int $httpCode = 409): \Phalcon\Http\Response
     {
         // Change the HTTP status
         $this->response->setStatusCode($httpCode);
-    
+
         // Send errors to the client
         $errors = [];
-    
-        if($model instanceof \Phalcon\Mvc\Model) {
-          foreach ($model->getMessages() as $message) {
-              $errors[] = $message->getMessage();
-          }
+
+        if ($model instanceof \Phalcon\Mvc\Model) {
+            foreach ($model->getMessages() as $message) {
+                $errors[] = $message->getMessage();
+            }
         } else {
-          $errors = $model;
+            $errors = $model;
         }
 
-    
         $this->response->setJsonContent(
             [
                 'status' => 'ERROR',
                 'errors' => $errors,
             ]
         );
-    
+
         return $this->response;
     }
 
@@ -72,4 +73,42 @@ class BaseController extends Controller {
 
     }
 
+    /**
+     * New user registration
+     *
+     * Try to register a new user. In case of success, send the user password to
+     * the provided email address. In case of error, return false.
+     */
+    public function register(array $userData, bool $indirect = false): UserModel
+    {
+        $userData['plainTextPassword'] = $this->generatePassword();
+        $userData['password'] = $this->security->hash($userData['plainTextPassword']);
+
+        $userModel = new UserModel();
+        $status = $userModel->save($userData);
+
+        if ($status === true) {
+
+          $template = $indirect ? 'register-indirect' : 'register';
+
+            $this->sendEmail($template, 'Your password', $userData);
+
+            $userModel->password = null;
+
+            return $userModel;
+        }
+
+        return $userModel;
+    }
+
+    /**
+     * Password generator
+     *
+     * @return string
+     * @see https://docs.phalconphp.com/3.4/en/api/Phalcon_Security_Random
+     */
+    private function generatePassword(): string
+    {
+        return (new \Phalcon\Security\Random())->base58();
+    }
 }
