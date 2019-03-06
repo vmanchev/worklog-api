@@ -125,6 +125,22 @@ class UserController extends BaseController
     }
 
     /**
+     * Get user by id
+     * 
+     * @param int $id User id
+     */
+    public function profile(int $id) {
+
+        $user = UserModel::findFirst($id);
+
+        if ($user) {
+            return $this->successResponse($user);
+          }
+  
+          return $this->errorResponse(null, 404);
+    }
+
+    /**
      * Password generator
      *
      * @return string
