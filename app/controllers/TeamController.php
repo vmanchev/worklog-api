@@ -3,6 +3,7 @@
 namespace Worklog\Controllers;
 
 use Worklog\Controllers\BaseController;
+use Worklog\Models\Project as ProjectModel;
 use Worklog\Models\ProjectTeam as TeamModel;
 use Worklog\Models\User as UserModel;
 
@@ -39,18 +40,7 @@ class TeamController extends BaseController
         $status = $teamModel->save($memberData);
 
         if ($status === true) {
-
-          $projectName = $teamModel->project->name;
-          $userModel = UserModel::findFirst($memberData['user_id']);
-
-            $this->sendEmail('new-team-member', 'Welcome to ' . $projectName, [
-                'projectName' => $projectName,
-                'firstName' => $userModel->firstName,
-                'lastName' => $userModel->lastName,
-                'email' => $userModel->email,
-                'adminNames' => UserModel::findFirst($this->auth->data('user')->id)->getFullName(),
-                'dateTimeNow' => date('Y-m-d H:i:s')
-            ]);
+            $this->sendEmailToTeamMember($project_id, $user_id, 'add-team-member');
             return $this->successResponse($teamModel, 201);
         }
         return $this->errorResponse($teamModel);
@@ -91,9 +81,43 @@ class TeamController extends BaseController
         }
 
         if ($teamMember->delete()) {
+            $this->sendEmailToTeamMember($project_id, $user_id, 'delete-team-member');
             return $this->successResponse();
         }
 
         return $this->errorResponse($teamMember);
+    }
+
+    private function sendEmailToTeamMember(int $project_id, int $user_id, string $template)
+    {
+
+        $projectModel = ProjectModel::findFirst($project_id);
+        $userModel = UserModel::findFirst($user_id);
+
+        $this->sendEmail(
+            $template,
+            $this->getSubjectByTemplate($template, $projectModel),
+            [
+                'projectName' => $projectModel->name,
+                'firstName' => $userModel->firstName,
+                'lastName' => $userModel->lastName,
+                'email' => $userModel->email,
+                'adminNames' => UserModel::findFirst($this->auth->data('user')->id)->getFullName(),
+                'dateTimeNow' => date('Y-m-d H:i:s'),
+            ]);
+
+    }
+
+    /**
+     * Get email subject, based on the template name
+     */
+    private function getSubjectByTemplate(string $template, ProjectModel $projectModel): string
+    {
+        $templateSubjectMap = [
+            'add-team-member' => 'Welcome to ' . $projectModel->name,
+            'delete-team-member' => 'Say goodbye to ' . $projectModel->name,
+        ];
+
+        return $templateSubjectMap[$template];
     }
 }
