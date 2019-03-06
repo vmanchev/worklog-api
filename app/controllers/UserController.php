@@ -5,7 +5,6 @@ namespace Worklog\Controllers;
 use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
 use Worklog\Models\User as UserModel;
-use Worklog\Utils\Template;
 
 class UserController extends BaseController
 {
@@ -44,8 +43,7 @@ class UserController extends BaseController
             ]);
         }
 
-        $userModel->appendMessage(new ModelMessage('login.invalid'));
-        return $this->errorResponse($userModel);
+        return $this->errorResponse(['login.invalid']);
     }
 
     public function forgotPassword()
@@ -178,26 +176,4 @@ class UserController extends BaseController
         return (new \Phalcon\Security\Random())->base58();
     }
 
-    /**
-     * Send email message
-     *
-     * @param string $templateName Must match a folter name from 'emails'
-     * @param string $subject Subject line for this message
-     * @param array $params Template and user data to be used for this message
-     */
-    private function sendEmail(string $templateName, string $subject, array $params)
-    {
-
-        $contentHtml = Template::renderHtml($this->view, $templateName, $params);
-        $contentTxt = Template::renderTxt($this->view, $templateName, $params);
-
-        $this->mail->messages()->send($this->config->mailGun->domain, [
-            'from' => $this->config->mailGun->defaultSender->name . '<' . $this->config->mailGun->defaultSender->email . '>',
-            'to' => $params['firstName'] . ' ' . $params['lastName'] . ' <' . $params['email'] . '>',
-            'subject' => $subject,
-            'text' => $contentTxt,
-            'html' => $contentHtml,
-        ]);
-
-    }
 }

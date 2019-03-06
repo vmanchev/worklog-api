@@ -4,6 +4,7 @@ namespace Worklog\Controllers;
 
 use Worklog\Controllers\BaseController;
 use Worklog\Models\ProjectTeam as TeamModel;
+use Worklog\Models\User as UserModel;
 
 class TeamController extends BaseController
 {
@@ -25,7 +26,7 @@ class TeamController extends BaseController
     /**
      * Add new member to a team
      */
-    public function create(int $project_id)
+    public function addNewTeamMember(int $project_id)
     {
         if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
             return $this->errorResponse(null, 403);
@@ -38,6 +39,18 @@ class TeamController extends BaseController
         $status = $teamModel->save($memberData);
 
         if ($status === true) {
+
+          $projectName = $teamModel->project->name;
+          $userModel = UserModel::findFirst($memberData['user_id']);
+
+            $this->sendEmail('new-team-member', 'Welcome to ' . $projectName, [
+                'projectName' => $projectName,
+                'firstName' => $userModel->firstName,
+                'lastName' => $userModel->lastName,
+                'email' => $userModel->email,
+                'adminNames' => UserModel::findFirst($this->auth->data('user')->id)->getFullName(),
+                'dateTimeNow' => date('Y-m-d H:i:s')
+            ]);
             return $this->successResponse($teamModel, 201);
         }
         return $this->errorResponse($teamModel);

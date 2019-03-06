@@ -55,7 +55,7 @@ try {
     $teamCollection->setHandler(new TeamController());
     $teamCollection->setPrefix('/project/{project_id}/team');
 
-    $teamCollection->post('/', 'create');
+    $teamCollection->post('/', 'addNewTeamMember');
     $teamCollection->get('/', 'search');
     $teamCollection->put('/{user_id}', 'update');
     $teamCollection->delete('/{user_id}', 'delete');

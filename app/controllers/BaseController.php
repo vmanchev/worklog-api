@@ -3,6 +3,7 @@
 namespace Worklog\Controllers;
 
 use Phalcon\Mvc\Controller;
+use Worklog\Utils\Template as EmailTemplate;
 
 class BaseController extends Controller {
 
@@ -46,6 +47,29 @@ class BaseController extends Controller {
         );
     
         return $this->response;
+    }
+
+    /**
+     * Send email message
+     *
+     * @param string $templateName Must match a folter name from 'emails'
+     * @param string $subject Subject line for this message
+     * @param array $params Template and user data to be used for this message
+     */
+    public function sendEmail(string $templateName, string $subject, array $params)
+    {
+
+        $contentHtml = EmailTemplate::renderHtml($this->view, $templateName, $params);
+        $contentTxt = EmailTemplate::renderTxt($this->view, $templateName, $params);
+
+        $this->mail->messages()->send($this->config->mailGun->domain, [
+            'from' => $this->config->mailGun->defaultSender->name . '<' . $this->config->mailGun->defaultSender->email . '>',
+            'to' => $params['firstName'] . ' ' . $params['lastName'] . ' <' . $params['email'] . '>',
+            'subject' => $subject,
+            'text' => $contentTxt,
+            'html' => $contentHtml,
+        ]);
+
     }
 
 }
