@@ -34,14 +34,14 @@ class ProjectController extends BaseController
     public function report($id)
     {
         if (!TeamModel::isTeamMember($id, $this->auth->data('user')->id)) {
-            return $this->errorResponse($project, 403);
+            return $this->errorResponse(['user_id.notTeamMember'], 403);
         }
 
         // make sure the current logged user has access to this project
         $project = ProjectModel::findFirst($id);
 
         if (!$project) {
-            return $this->errorResponse(new ProjectModel(), 404);
+            return $this->errorResponse(['id.notFound'], 404);
         }
 
         $user = UserModel::findFirst($this->auth->data('user')->id);
