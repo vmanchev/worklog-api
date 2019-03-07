@@ -14,7 +14,7 @@ class LogController extends BaseController
         $logData = (array) $this->request->getJsonRawBody();
 
         if (!TeamModel::isTeamMember($logData['project_id'], $this->auth->data('user')->id)) {
-            return $this->errorResponse(null, 403);
+            return $this->errorResponse(['user_id.notTeamMember'], 403);
         }
 
         // make sure time is logged for the current user
@@ -46,13 +46,19 @@ class LogController extends BaseController
         // remove _url which is always the first element
         array_shift($queryParams);
 
-        if (!empty($queryParams)) {
+        if (empty($queryParams)) {
             $queryParams['auth_user_id'] = $this->auth->data('user')->id;
             return $this->successResponse((new LogModel())->searchWithParams($queryParams));
         }
 
         // no query parameters, return results for authenticated user only
-        return $this->successResponse(LogModel::findByUserId($this->auth->data('user')->id));
+        $results = LogModel::findByUserId($this->auth->data('user')->id);
+
+        if ($results->count() > 0) {
+            return $this->successResponse($results, 200);
+        }
+
+        return $this->successResponse([], 204);
     }
 
     /**
@@ -67,9 +73,8 @@ class LogController extends BaseController
 
         $log = LogModel::findFirst($id);
 
-        // invalid id
         if (!$log) {
-            return $this->errorResponse(new LogModel(), 404);
+            return $this->errorResponse(['id.notFound'], 404);
         }
 
         // current user is worklog author or current user is team admin
@@ -77,7 +82,7 @@ class LogController extends BaseController
             return $this->deleteLog($log);
         }
 
-        return $this->errorResponse($log, 403);
+        return $this->errorResponse(['user_id.accessDenied'], 403);
     }
 
     public function update(int $id)
@@ -85,7 +90,7 @@ class LogController extends BaseController
         $logModel = LogModel::findFirst($id);
 
         if (!$logModel) {
-            return $this->errorResponse(new LogModel(), 404);
+            return $this->errorResponse(['id.notFound'], 404);
         }
 
         if ($logModel->user_id === $this->auth->data('user')->id || TeamModel::isTeamAdmin($logModel->project_id, $this->auth->data('user')->id)) {
@@ -99,7 +104,7 @@ class LogController extends BaseController
             return $this->errorResponse($logModel, 200);
         }
 
-        return $this->errorResponse(null, 403);
+        return $this->errorResponse(['user_id.accessDenied'], 403);
     }
 
     /**

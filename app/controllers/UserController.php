@@ -4,6 +4,7 @@ namespace Worklog\Controllers;
 
 use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
+use Worklog\Models\User as UserModel;
 
 class UserController extends BaseController
 {
@@ -34,7 +35,7 @@ class UserController extends BaseController
             ]);
         }
 
-        return $this->errorResponse(['login.invalid']);
+        return $this->errorResponse(['email.invalid', 'password.invalid']);
     }
 
     public function forgotPassword()
@@ -44,20 +45,20 @@ class UserController extends BaseController
 
         $userModel = UserModel::findFirstByEmail($email);
 
-        if ($userModel) {
-
-            $userData = $userModel->toArray();
-            $userData['plainTextPassword'] = $this->generatePassword();
-
-            $userModel->password = $this->security->hash($userData['plainTextPassword']);
-
-            $userModel->save();
-
-            $this->sendEmail('forgot', 'Your new password', $userData);
-
-            return $this->successResponse(['email' => $email], 200);
+        if (!$userModel) {
+            return $this->errorResponse(['email.notFound'], 404);
         }
-        return $this->errorResponse($userModel, 404);
+
+        $userData = $userModel->toArray();
+        $userData['plainTextPassword'] = $this->generatePassword();
+
+        $userModel->password = $this->security->hash($userData['plainTextPassword']);
+
+        $userModel->save();
+
+        $this->sendEmail('forgot', 'Your new password', $userData);
+
+        return $this->successResponse(['email' => $email], 200);
 
     }
 
@@ -74,8 +75,7 @@ class UserController extends BaseController
             return $this->successResponse($userData);
         }
 
-        $userModel->appendMessage(new ModelMessage('user.notFound'));
-        return $this->errorResponse($userModel);
+        return $this->errorResponse(['user.notFound'], 404);
     }
 
     public function update()
@@ -83,8 +83,7 @@ class UserController extends BaseController
         $userModel = UserModel::findFirst($this->auth->data('user')->id);
 
         if (!$userModel) {
-            $userModel->appendMessage(new ModelMessage('user.notFound'));
-            return $this->errorResponse($userModel);
+          return $this->errorResponse(['user.notFound'], 404);
         }
 
         // get the submitted data
@@ -92,8 +91,7 @@ class UserController extends BaseController
 
         // edit own profile
         if ($userRequest['id'] !== $userModel->id) {
-            $userModel->appendMessage(new ModelMessage('user.accessDenied'));
-            return $this->errorResponse($userModel);
+          return $this->errorResponse(['user_id.accessDenied'], 403);
         }
 
         // if password is submitted, we need to encode it
@@ -124,10 +122,11 @@ class UserController extends BaseController
         $user = UserModel::findFirst($id);
 
         if ($user) {
+            unset($user->password);
             return $this->successResponse($user);
         }
 
-        return $this->errorResponse(null, 404);
+        return $this->errorResponse(['id.notFound'], 404);
     }
 
     /**
@@ -149,11 +148,7 @@ class UserController extends BaseController
             ],
         ])->toArray();
 
-        if (!$result) {
-            return $this->errorResponse($result);
-        }
-
-        $responseCode = strlen($result) ? 200 : 404;
+        $responseCode = strlen($result) ? 200 : 204;
 
         return $this->successResponse($result, $responseCode);
     }

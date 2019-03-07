@@ -107,7 +107,7 @@ class BaseController extends Controller
      * @return string
      * @see https://docs.phalconphp.com/3.4/en/api/Phalcon_Security_Random
      */
-    private function generatePassword(): string
+    protected function generatePassword(): string
     {
         return (new \Phalcon\Security\Random())->base58();
     }

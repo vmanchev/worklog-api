@@ -14,8 +14,8 @@ class TeamController extends BaseController
      */
     public function search(int $project_id)
     {
-        if (!TeamModel::isTeamMember($project_id, $this->auth->data('user')->id)) {
-            return $this->errorResponse(null, 403);
+        if (!TeamModel::getTeamMember($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse(['user_id.notTeamMember'], 403);
         }
 
         return $this->successResponse(
@@ -30,7 +30,7 @@ class TeamController extends BaseController
     public function addNewTeamMember(int $project_id)
     {
         if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
-            return $this->errorResponse(null, 403);
+            return $this->errorResponse('user_id.notTeamAdmin', 403);
         }
 
         $memberData = (array) $this->request->getJsonRawBody();
@@ -72,15 +72,15 @@ class TeamController extends BaseController
     public function update(int $project_id, int $user_id)
     {
         if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
-            return $this->errorResponse(null, 403);
+            return $this->errorResponse('user_id.notTeamAdmin', 403);
         }
 
         $memberData = (array) $this->request->getJsonRawBody();
 
-        $teamModel = TeamModel::getTeamMember($project_id, $user_id);
+        $teamMember = TeamModel::getTeamMember($project_id, $user_id);
 
-        if (!$teamModel) {
-            return $this->errorResponse(null, 404);
+        if (!$teamMember) {
+            return $this->errorResponse(['user_id.notTeamMember'], 404);
         }
 
         $status = $teamModel->update($memberData, ['role']);
@@ -94,13 +94,13 @@ class TeamController extends BaseController
     public function delete(int $project_id, int $user_id)
     {
         if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
-            return $this->errorResponse(null, 403);
+            return $this->errorResponse('user_id.notTeamAdmin', 403);
         }
 
         $teamMember = TeamModel::getTeamMember($project_id, $user_id);
 
         if (!$teamMember) {
-            return $this->errorResponse(['project_id.invalid', 'user_id.invalid'], 404);
+            return $this->errorResponse(['user_id.notTeamMember'], 404);
         }
 
         if ($teamMember->delete()) {

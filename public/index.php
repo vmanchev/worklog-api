@@ -33,7 +33,7 @@ try {
     $userCollection->put('/', 'update');
     $userCollection->post('/login', 'login');
     $userCollection->get('/me', 'getUserByAuthToken');
-    $userCollection->get('/{id}', 'profile');
+    $userCollection->get('/{id:[0-9]+}', 'profile');
     $userCollection->get('/', 'search');
     $userCollection->post('/forgot', 'forgotPassword');
 
