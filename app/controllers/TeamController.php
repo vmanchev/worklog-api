@@ -14,7 +14,9 @@ class TeamController extends BaseController
      */
     public function search(int $project_id)
     {
-        $this->allowTeamMember($project_id, $this->auth->data('user')->id);
+        if (!TeamModel::getTeamMember($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse(['user_id.notTeamMember'], 403);
+        }
 
         return $this->successResponse(
             TeamModel::findByProjectId($project_id)->toArray(),
@@ -27,7 +29,9 @@ class TeamController extends BaseController
      */
     public function addNewTeamMember(int $project_id)
     {
-        $this->allowTeamAdmin();
+        if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse('user_id.notTeamAdmin', 403);
+        }
 
         $memberData = (array) $this->request->getJsonRawBody();
 
@@ -67,11 +71,17 @@ class TeamController extends BaseController
 
     public function update(int $project_id, int $user_id)
     {
-        $this->allowTeamAdmin();
+        if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse('user_id.notTeamAdmin', 403);
+        }
 
         $memberData = (array) $this->request->getJsonRawBody();
 
-        $teamModel = $this->allowTeamMember($project_id, $user_id);
+        $teamMember = TeamModel::getTeamMember($project_id, $user_id);
+
+        if (!$teamMember) {
+            return $this->errorResponse(['user_id.notTeamMember'], 404);
+        }
 
         $status = $teamModel->update($memberData, ['role']);
 
@@ -83,9 +93,15 @@ class TeamController extends BaseController
 
     public function delete(int $project_id, int $user_id)
     {
-        $this->allowTeamAdmin();
+        if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
+            return $this->errorResponse('user_id.notTeamAdmin', 403);
+        }
 
-        $teamMember = $this->allowTeamMember($project_id, $user_id);
+        $teamMember = TeamModel::getTeamMember($project_id, $user_id);
+
+        if (!$teamMember) {
+            return $this->errorResponse(['user_id.notTeamMember'], 404);
+        }
 
         if ($teamMember->delete()) {
             $this->sendEmailToTeamMember($project_id, $user_id, 'delete-team-member');
@@ -126,25 +142,5 @@ class TeamController extends BaseController
         ];
 
         return $templateSubjectMap[$template];
-    }
-
-    private function allowTeamMember(int $project_id, int $user_id)
-    {
-        $teamMember = TeamModel::getTeamMember($project_id, $user_id);
-
-        if (!$teamMember) {
-            return $this->errorResponse(['user_id.notTeamMember'], 404);
-        }
-
-        return $teamMember;
-    }
-
-    private function allowTeamAdmin()
-    {
-        if (!TeamModel::isTeamAdmin($project_id, $this->auth->data('user')->id)) {
-            return $this->errorResponse('user_id.notTeamAdmin', 403);
-        }
-
-        return true;
     }
 }

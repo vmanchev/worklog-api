@@ -46,13 +46,19 @@ class LogController extends BaseController
         // remove _url which is always the first element
         array_shift($queryParams);
 
-        if (!empty($queryParams)) {
+        if (empty($queryParams)) {
             $queryParams['auth_user_id'] = $this->auth->data('user')->id;
             return $this->successResponse((new LogModel())->searchWithParams($queryParams));
         }
 
         // no query parameters, return results for authenticated user only
-        return $this->successResponse(LogModel::findByUserId($this->auth->data('user')->id));
+        $results = LogModel::findByUserId($this->auth->data('user')->id);
+
+        if ($results->count() > 0) {
+            return $this->successResponse($results, 200);
+        }
+
+        return $this->successResponse([], 204);
     }
 
     /**

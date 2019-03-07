@@ -22,7 +22,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"wlu5@yopmail.com\",\n\t\"firstName\": \"Elvis\",\n\t\"lastName\": \"Presley\"\n}"
+							"raw": "{\n\t\"email\": \"wlu3@yopmail.com\",\n\t\"firstName\": \"Peter\",\n\t\"lastName\": \"Pann\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user",
@@ -63,7 +63,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"venelinphp@gmail.com\",\n\t\"password\": \"qwerty\"\n}"
+							"raw": "{\n\t\"email\": \"wlu3@yopmail.com\",\n\t\"password\": \"1z9Bom4pgTWcz17T\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user/login",
@@ -125,7 +125,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"id\": \"1\",\n        \"password\": \"qwerty\"\n}"
+							"raw": "{\n        \"id\": \"13\",\n        \"password\": \"qwerty\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user",
@@ -153,7 +153,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"wlu3@yopmail.com\"\n}"
+							"raw": "{\n\t\"email\": \"wlu1@yopmail.com\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/user/forgot",
@@ -192,7 +192,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"name\": \"Test project 333\"\n}"
+							"raw": "{\n        \"name\": \"ERP system v1\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/project",
@@ -274,13 +274,13 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{baseUrl}}/project/6/team",
+							"raw": "{{baseUrl}}/project/7/team",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"project",
-								"6",
+								"7",
 								"team"
 							]
 						}
@@ -306,16 +306,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"email\": \"wlu10@yopmail.com\",\n\t\"firstName\": \"Vassil\",\n\t\"lastName\": \"Naydenov\",\n\t\"role\": \"ROLE_USER\"\n}"
+							"raw": "{\n\t\"user_id\": \"14\",\n\t\"role\": \"ROLE_ADMIN\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/project/6/team",
+							"raw": "{{baseUrl}}/project/7/team",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"project",
-								"6",
+								"7",
 								"team"
 							]
 						}
@@ -426,7 +426,7 @@
 							"raw": "{\n        \"name\": \"Test project 333\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/log?project_id=4",
+							"raw": "{{baseUrl}}/log?project_id=7",
 							"host": [
 								"{{baseUrl}}"
 							],
@@ -436,7 +436,7 @@
 							"query": [
 								{
 									"key": "project_id",
-									"value": "4"
+									"value": "7"
 								}
 							]
 						}
@@ -462,7 +462,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n        \"project_id\": 6,\n        \"start\": \"2019-02-28 16:00:00\",\n        \"end\": \"2019-02-28 16:30:00\",\n        \"description\": \"daily standup meeting\"\n}"
+							"raw": "{\n        \"project_id\": 7,\n        \"start\": \"2019-03-07 13:00:00\",\n        \"end\": \"2019-03-07 14:00:00\",\n        \"description\": \"asdgfsdgfsdfg 2\"\n}"
 						},
 						"url": {
 							"raw": "{{baseUrl}}/log",
@@ -498,13 +498,13 @@
 							"raw": "{\n        \"user_id\": 2,\n        \"project_id\": 5,\n        \"start\": \"2019-02-28T17:00:00\",\n        \"end\": \"2019-02-28T18:00:00\"\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/log/36",
+							"raw": "{{baseUrl}}/log/2",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"log",
-								"36"
+								"2"
 							]
 						}
 					},
@@ -529,16 +529,16 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"id\": \"32\",\n    \"project_id\": 5,\n    \"user_id\": \"1\",\n    \"end\": \"2019-02-28 15:59:59\",\n    \"elapsed\": 6300,\n    \"description\": \"code refactoring\"\n\t\n}"
+							"raw": "{\n            \"project_id\": \"7\",\n            \"user_id\": \"13\",\n            \"start\": \"2019-03-07 10:30:00\",\n            \"end\": \"2019-03-07 12:00:00\",\n            \"elapsed\": \"5400\",\n            \"description\": \"MVP-123 - ready by dev2\"\n\t\n}"
 						},
 						"url": {
-							"raw": "{{baseUrl}}/log/36",
+							"raw": "{{baseUrl}}/log/2",
 							"host": [
 								"{{baseUrl}}"
 							],
 							"path": [
 								"log",
-								"36"
+								"2"
 							]
 						}
 					},

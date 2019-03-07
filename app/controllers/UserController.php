@@ -4,6 +4,7 @@ namespace Worklog\Controllers;
 
 use Phalcon\Mvc\Model\Message as ModelMessage;
 use Worklog\Controllers\BaseController;
+use Worklog\Models\User as UserModel;
 
 class UserController extends BaseController
 {
@@ -121,6 +122,7 @@ class UserController extends BaseController
         $user = UserModel::findFirst($id);
 
         if ($user) {
+            unset($user->password);
             return $this->successResponse($user);
         }
 
